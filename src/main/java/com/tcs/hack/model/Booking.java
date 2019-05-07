@@ -9,17 +9,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Booking {
 
-	
+	@Id
+	@Column(name="booking_id")
 	private int bookingId;
-	@Column(nullable=false)
+	@Column(nullable=false, name="booking_date")
 	private Date bookingDate;
-	
+	@Column(name="booking_slot")
 	private String bookingSlot;
 	
+	@JoinColumn(name = "resource_id", referencedColumnName = "resource_id")
+    @OneToOne(optional = false)
+//	@Column(name="resource_id")
 	private Resource resource;
 	
 	public int getBookingId() {
