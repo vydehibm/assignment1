@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,9 +52,9 @@ public class Controller {
 	}
 
 	@DeleteMapping(path = "/resources")
-	public String deleteResource(@RequestBody Resource resource) {
+	public ResponseEntity<String> deleteResource(@RequestBody Resource resource) {
 		resourceRepo.delete(resource);
-		return "Deleted a Resource!";
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	@GetMapping(path = "/reservations")
@@ -72,7 +74,7 @@ public class Controller {
 	}
 	
 	  @PostMapping(path = "/reservations") 
-	  public String addReservation(@RequestBody BookingDTO bookingForm) throws ParseException 
+	  public ResponseEntity<String> addReservation(@RequestBody BookingDTO bookingForm) throws ParseException 
 	  {  
 		  DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 		  Date bookingDate= new Date(df.parse(bookingForm.getBookingDate()).getTime());
@@ -88,11 +90,11 @@ public class Controller {
 			  			bookingDate, 
 			  			bookingForm.getBookingSlot(),
 			  			resource));
-			  	return "EquipmentBooked";
+			  	return new ResponseEntity<>(HttpStatus.CREATED);
 			  }
 		  else {
 			  bookingForm = null;
-		  	  return "Equipment not available during this time";
+		  	  return new ResponseEntity<>("Resource not available", HttpStatus.OK) ;
 		  }	  
 	  }
 	/*
