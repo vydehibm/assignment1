@@ -30,16 +30,16 @@ public class BookingRepositoryTest {
 	private Booking booking;
 	
 	
-	/*
-	 * @Test public void findAvailabilityTest() throws ParseException {
-	 * java.sql.Date dt = new java.sql.Date(new
-	 * SimpleDateFormat("dd-MM-yyyy").parse("31-12-17").getTime()); int cnt =
-	 * repo.findAvailability(1001, dt, "15:00 - 16:00"); assertEquals(0, cnt);
-	 * booking = buildObject(dt,"15:00 - 16:00",1001); repo.save(booking); cnt =
-	 * repo.findAvailability(1001, dt, "15:00 - 16:00"); assertEquals(1, cnt);
-	 * 
-	 * }
-	 */
+	
+	  @Test public void findAvailabilityTest() throws ParseException {
+	  java.sql.Date dt = new java.sql.Date(new
+	  SimpleDateFormat("dd-MM-yyyy").parse("31-12-17").getTime()); int cnt =
+	  repo.findAvailability(1001, dt, "15:00 - 16:00"); assertEquals(0, cnt);
+	  booking = buildObject(dt,"15:00 - 16:00",1001); repo.save(booking); cnt =
+	  repo.findAvailability(1001, dt, "15:00 - 16:00"); assertEquals(1, cnt);
+	  
+	  }
+	 
 	
 	@Test
 	public void saveTest() throws ParseException

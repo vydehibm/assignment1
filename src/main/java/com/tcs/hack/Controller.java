@@ -1,5 +1,10 @@
 package com.tcs.hack;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tcs.hack.dto.BookingDTO;
+import com.tcs.hack.dto.ReservationsDTO;
 import com.tcs.hack.model.Booking;
 import com.tcs.hack.model.Resource;
 import com.tcs.hack.repository.BookingRepository;
@@ -20,47 +27,81 @@ import com.tcs.hack.repository.ResourceRepository;
 @RestController
 @RequestMapping("/tcs/hack/v1")
 public class Controller {
-	@Autowired 
+	@Autowired
 	ResourceRepository resourceRepo;
-	@Autowired 
+	@Autowired
 	BookingRepository bookingRepo;
+
 	@GetMapping(path = "/resources")
 	public List<Resource> fetchAllResources() {
 		return resourceRepo.findAll();
 	}
+
 	@RequestMapping(path = "/resources/{id}", method = RequestMethod.GET)
-	public List<Resource> fetchSpecificResource(@PathVariable ("id") int id) {
+	public Resource fetchSpecificResource(@PathVariable("id") int id) {
 		return resourceRepo.findByResourceId(id);
-		
+
 	}
+
 	@PostMapping(path = "/resources")
 	public String addNewResource(@RequestBody Resource resource) {
 		resourceRepo.save(resource);
-		return "Added new Resource!";	
+		return "Added new Resource!";
 	}
-	
+
 	@DeleteMapping(path = "/resources")
 	public String deleteResource(@RequestBody Resource resource) {
 		resourceRepo.delete(resource);
-		return "Deleted a Resource!";	
+		return "Deleted a Resource!";
+	}
+
+	@GetMapping(path = "/reservations")
+	public List<ReservationsDTO> fetchallReservations() {
+		List<Booking> bookingList = bookingRepo.findAll();
+		System.out.println(bookingList.size());
+		List<ReservationsDTO> reservationsDTOs = new ArrayList<ReservationsDTO>();
+		for (Booking booking : bookingList) {
+			ReservationsDTO reservationsDTO = new ReservationsDTO();
+			reservationsDTO.setBookingDate(booking.getBookingDate().toString());
+			reservationsDTO.setBookingSlot(booking.getBookingSlot());
+			reservationsDTO.setResourceName(booking.getResource().getResourceName());
+			reservationsDTOs.add(reservationsDTO);
+		}
+
+		return reservationsDTOs;
 	}
 	
-	@GetMapping(path = "/reservations")
-	public List<Booking> fetchallReservations(){
-		return bookingRepo.findAll();
-	}
+	  @PostMapping(path = "/reservations") 
+	  public String addReservation(@RequestBody BookingDTO bookingForm) throws ParseException 
+	  {  
+		  DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+		  Date bookingDate= new Date(df.parse(bookingForm.getBookingDate()).getTime());
+		  System.out.println(bookingDate);
+		  	int i=12;
+
+		  if (bookingRepo.findAvailability(bookingForm.getResourceId(), bookingDate, bookingForm.getBookingSlot()) == 0)
+			  {
+			  
+			  Resource resource = resourceRepo.findOne(bookingForm.getResourceId());
+			  System.out.println(resource);
+			  	bookingRepo.save(new Booking(i++,
+			  			bookingDate, 
+			  			bookingForm.getBookingSlot(),
+			  			resource));
+			  	return "EquipmentBooked";
+			  }
+		  else {
+			  bookingForm = null;
+		  	  return "Equipment not available during this time";
+		  }	  
+	  }
 	/*
-	 * @PostMapping(path = "/reservations") public String
-	 * addReservation(@RequestBody Booking booking) { if
-	 * ((findAvailability(booking.getBookingId(),booking.getBookingDate(),booking.
-	 * getBookingSlot()))==1) { bookingRepo.save(booking); return
-	 * "Equipment booking complete!"; } else { return
-	 * "Equipment not available. Please try another day"; } } public int
-	 * findAvailability(int resourceId, java.sql.Date date, String slot) { int
-	 * equipmentsAvailable=0; List<Booking> currentReservation =
-	 * bookingRepo.findAll(); for (Booking book: currentReservation) { if
-	 * ((book.getBookingSlot()==slot) && book.getBookingDate()==date)
-	 * equipmentsAvailable=0; else equipmentsAvailable=1; } return
-	 * equipmentsAvailable; }
+	 * public int findAvailability(int resourceId, java.sql.Date date, String slot)
+	 * { int EquipmentsAvailable=0; List<Booking> currentBookings =
+	 * bookingRepo.findByBookingDate(date); for (Booking booking: currentBookings) {
+	 * if ((resourceId == booking.getResource().getResourceId()) &&
+	 * date==booking.getBookingDate() && slot == booking.getBookingSlot())
+	 * EquipmentsAvailable=1; else EquipmentsAvailable=0; } return
+	 * EquipmentsAvailable; }
 	 */
 }

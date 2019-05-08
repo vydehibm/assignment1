@@ -8,7 +8,7 @@ import com.tcs.hack.model.Resource;
 
 public interface ResourceRepository extends JpaRepository<Resource,Integer>{
 	List<Resource> findAll();
-	List<Resource> findByResourceId(Integer Id);
+	Resource findByResourceId(Integer Id);
 	//String deleteByResourceId(int resource_id);
 //	@Override
 //	default void delete(Resource entity) {

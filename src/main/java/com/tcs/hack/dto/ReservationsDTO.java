@@ -5,6 +5,15 @@ public class ReservationsDTO {
 	private String bookingDate;
 	private String bookingSlot;
 	
+	public ReservationsDTO(String resourceName, String bookingDate, String bookingSlot) {
+		super();
+		this.resourceName = resourceName;
+		this.bookingDate = bookingDate;
+		this.bookingSlot = bookingSlot;
+	}
+	public ReservationsDTO() {
+		// TODO Auto-generated constructor stub
+	}
 	public String getBookingSlot() {
 		return bookingSlot;
 	}

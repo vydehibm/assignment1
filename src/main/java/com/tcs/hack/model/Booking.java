@@ -13,7 +13,14 @@ import javax.persistence.OneToOne;
 
 @Entity
 public class Booking {
-
+	public Booking () {}
+	public Booking(int bookingId, Date bookingDate, String bookingSlot, Resource resource) {
+		super();
+		this.bookingId = bookingId;
+		this.bookingDate = bookingDate;
+		this.bookingSlot = bookingSlot;
+		this.resource = resource;
+	}
 	@Id
 	@Column(name="booking_id")
 	private int bookingId;
@@ -23,7 +30,7 @@ public class Booking {
 	private String bookingSlot;
 	
 	@JoinColumn(name = "resource_id", referencedColumnName = "resource_id")
-    @OneToOne(optional = false)
+    @OneToOne
 //	@Column(name="resource_id")
 	private Resource resource;
 	
